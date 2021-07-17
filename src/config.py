@@ -1,7 +1,7 @@
 import os
 
 # Bot configuration
-TOKEN = os.getenv('TOKEN', '1821546691:AAHw110aXaePDNM5fUDVEEMPiHuKF-4vgTI')
+TOKEN = os.getenv('TOKEN')
 
 # Mongodb configuration
 MONGODB_DATABASE = os.getenv('MONGODB_DATABASE', 'SMSBombir')
