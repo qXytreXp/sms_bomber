@@ -16,17 +16,25 @@ class CountSms:
         self.user_id = user_id
 
     def save_count_sent_sms_to_redis(self, count):
+        """ 
+            Save in radis for those temporary data,
+            and so as not to load mongodb.
+        """
         if (current_count_sms := redis.get(self.user_id)):
             redis.set(self.user_id, int(current_count_sms)+count)
         else:
             redis.set(self.user_id, count)
 
     def save_count_sent_sms_to_mongo(self):
-        user = User.objects.get(user_id=self.user_id)
-        user.count_sent_sms = redis.get(self.user_id)
-        user.save()
-
+        """ Save result count, to mongo """
+        user = User.objects.get(user_id=self.user_id).count_sent_sms
+        if user.count_sent_sms == 0:
+            user.count_sent_sms = redis.get(self.user_id)
+        else:
+            sum_count_sms = user.count_sent_sms + redis.get(self.user_id)
+            user.count_sent_sms = sum_count_sms
         redis.delete(self.user_id)
+        user.save()
 
 
 class Bomber:
